@@ -6,15 +6,15 @@ const fs = require('fs')
 
 module.exports = class CorestoreSnapshotter {
   constructor({
-    corestore = './store',
-    snapshot = './corestore.json'
+    storage = './corestore',
+    snapshot = './snapshot.json'
   } = {}) {
-    this.corestore = corestore
+    this.storage = storage
     this.snapshot = snapshot
   }
 
   async inflate() {
-    const store = new Corestore(this.corestore)
+    const store = new Corestore(this.storage)
     const swarm = new Hyperswarm()
 
     swarm.on('connection', c => store.replicate(c))
@@ -43,7 +43,7 @@ module.exports = class CorestoreSnapshotter {
   }
 
   async flush() {
-    const store = new Corestore(this.corestore)
+    const store = new Corestore(this.storage)
     const swarm = new Hyperswarm()
 
     swarm.on('connection', c => store.replicate(c))

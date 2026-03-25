@@ -7,14 +7,14 @@ const args = command('corestore-snapshot',
   flag('--open', 'Open the snapshot, run before'),
   flag('--close', 'Close the snapshot, run after your stage'),
   flag('--snapshot <path>', 'Which snapshot file to use'),
-  flag('--corestore <path>', 'Which corestore to use')
+  flag('--storage <path>', 'Which corestore to use')
 ).parse()
 
 if (args) run()
 
 async function run() {
   const c = new CorestoreSnapshot({
-    corestore: args.flags.corestore,
+    storage: args.flags.storage,
     snapshot: args.flags.snapshot
   })
 
