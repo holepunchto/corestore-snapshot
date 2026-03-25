@@ -1,6 +1,6 @@
 {
   "name": "corestore-snapshot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Make a corestore snapshot for ci",
   "main": "index.js",
   "bin": {
