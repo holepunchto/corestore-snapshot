@@ -18,4 +18,4 @@ corestore-snapshot --close --corestore=./store
 
 ## License
 
-MIT
+Apache-2.0
