@@ -6,15 +6,17 @@ const fs = require('fs')
 
 module.exports = class CorestoreSnapshotter {
   constructor({
+    primaryKey = null
     storage = './corestore',
     snapshot = './snapshot.json'
   } = {}) {
+    this.primaryKey = primaryKey
     this.storage = storage
     this.snapshot = snapshot
   }
 
   async open() {
-    const store = new Corestore(this.storage)
+    const store = new Corestore(this.storage, { primaryKey: this.primaryKey, unsafe: true })
     const swarm = new Hyperswarm()
 
     swarm.on('connection', c => store.replicate(c))
@@ -43,7 +45,7 @@ module.exports = class CorestoreSnapshotter {
   }
 
   async close() {
-    const store = new Corestore(this.storage)
+    const store = new Corestore(this.storage, { primaryKey: this.primaryKey, unsafe: true })
     const swarm = new Hyperswarm()
 
     swarm.on('connection', c => store.replicate(c))
