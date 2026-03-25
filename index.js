@@ -13,7 +13,7 @@ module.exports = class CorestoreSnapshotter {
     this.snapshot = snapshot
   }
 
-  async inflate() {
+  async open() {
     const store = new Corestore(this.storage)
     const swarm = new Hyperswarm()
 
@@ -42,7 +42,7 @@ module.exports = class CorestoreSnapshotter {
     await store.close()
   }
 
-  async flush() {
+  async close() {
     const store = new Corestore(this.storage)
     const swarm = new Hyperswarm()
 
