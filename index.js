@@ -15,18 +15,23 @@ module.exports = class CorestoreSnapshotter {
   }
 
   async open() {
+    await fs.promises.mkdir(path.dirname(this.snapshot), { recursive: true })
+    const json = await parseJSON(this.snapshot)
+
     const store = new Corestore(this.storage, { primaryKey: this.primaryKey, unsafe: true })
     const swarm = new Hyperswarm()
 
     swarm.on('connection', c => store.replicate(c))
 
+    for (const { key } of json) {
+      const core = store.get(key)
+      await core.ready()
+      await core.close()
+    }
+
     for await (const discoveryKey of store.list()) {
       swarm.join(discoveryKey, { client: true, server: false })
     }
-
-    await fs.promises.mkdir(path.dirname(this.snapshot), { recursive: true })
-
-    const json = await parseJSON(this.snapshot)
 
     for (const { key, length } of json) {
       const core = store.get(key)
