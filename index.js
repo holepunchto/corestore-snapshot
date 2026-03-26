@@ -1,6 +1,5 @@
 const Corestore = require('corestore')
 const Hyperswarm = require('hyperswarm')
-const HypercoreId = require('hypercore-id-encoding')
 const path = require('path')
 const fs = require('fs')
 
