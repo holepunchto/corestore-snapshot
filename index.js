@@ -33,7 +33,7 @@ module.exports = class CorestoreSnapshotter {
       await core.ready()
 
       while (core.length < length) {
-        await new Promise(resolve => setTimeout(20, resolve))
+        await new Promise(resolve => setTimeout(resolve, 20))
       }
 
       await core.close()
