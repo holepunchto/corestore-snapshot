@@ -6,7 +6,7 @@ const fs = require('fs')
 
 module.exports = class CorestoreSnapshotter {
   constructor({
-    primaryKey = null
+    primaryKey = null,
     storage = './corestore',
     snapshot = './snapshot.json'
   } = {}) {
