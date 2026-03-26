@@ -19,7 +19,7 @@ async function run() {
   if (primaryKey) primaryKey = ID.decode(primaryKey)
 
   const c = new CorestoreSnapshot({
-    primaryKey
+    primaryKey,
     storage: args.flags.storage,
     snapshot: args.flags.snapshot
   })
