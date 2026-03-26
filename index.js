@@ -25,7 +25,7 @@ module.exports = class CorestoreSnapshotter {
 
     for (const { key, namespace, name } of json) {
       if (namespace) {
-        const ns = store.namespace(Buffer.from(namespace, 'hex'))
+        const ns = store.session({ namespace: Buffer.from(namespace, 'hex') })
         const core = ns.get({ name })
         await core.ready()
         await core.close()
