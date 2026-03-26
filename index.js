@@ -23,10 +23,18 @@ module.exports = class CorestoreSnapshotter {
 
     swarm.on('connection', c => store.replicate(c))
 
-    for (const { key } of json) {
-      const core = store.get(key)
-      await core.ready()
-      await core.close()
+    for (const { key, namespace, name } of json) {
+      if (namespace) {
+        const ns = store.namespace(Buffer.from(namespace, 'hex'))
+        const core = ns.get({ name })
+        await core.ready()
+        await core.close()
+        await ns.close()
+      } else {
+        const core = store.get(key)
+        await core.ready()
+        await core.close()
+      }
     }
 
     for await (const discoveryKey of store.list()) {
@@ -57,6 +65,7 @@ module.exports = class CorestoreSnapshotter {
     await fs.promises.mkdir(path.dirname(this.snapshot), { recursive: true })
 
     const json = []
+    const all = new Map()
 
     for await (const discoveryKey of store.list()) {
       swarm.join(discoveryKey, { client: true, server: false })
@@ -70,12 +79,25 @@ module.exports = class CorestoreSnapshotter {
         await new Promise(resolve => setTimeout(resolve, 20))
       }
 
-      json.push({
+      const entry = {
         key: core.id,
-        length: core.length
-      })
+        length: core.length,
+        namespace: null,
+        name: null
+      }
+
+      all.set(discoveryKey.toString('hex'), entry)
+      json.push(entry)
 
       await core.close()
+    }
+
+    for await (const { discoveryKey, alias } of store.storage.createAliasStream()) {
+      const entry = all.get(discoveryKey.toString('hex'))
+      if (entry) {
+        entry.namespace = alias.namespace.toString('hex')
+        entry.name = alias.name
+      }
     }
 
     await fs.promises.writeFile(this.snapshot, JSON.stringify(json, null, 2) + '\n')
