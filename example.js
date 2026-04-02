@@ -7,5 +7,3 @@ async function main () {
   await cs.inflate()
   await cs.flush()
 }
-
-

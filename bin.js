@@ -24,6 +24,6 @@ async function run() {
     snapshot: args.flags.snapshot
   })
 
-  if (args.flags.open) await c.open()
-  if (args.flags.close) await c.close()
+  if (args.flags.open) await c.open({ log: true })
+  if (args.flags.close) await c.close({ log: true })
 }

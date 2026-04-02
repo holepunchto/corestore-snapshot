@@ -14,9 +14,11 @@ module.exports = class CorestoreSnapshotter {
     this.snapshot = snapshot
   }
 
-  async open() {
+  async open({ log = false } = {}) {
     await fs.promises.mkdir(path.dirname(this.snapshot), { recursive: true })
     const json = await parseJSON(this.snapshot)
+
+    if (log) console.log('Opening snapshot', json)
 
     const store = new Corestore(this.storage, { primaryKey: this.primaryKey, unsafe: true })
     const swarm = new Hyperswarm()
@@ -45,6 +47,7 @@ module.exports = class CorestoreSnapshotter {
       const core = store.get(key)
       await core.ready()
 
+      if (log) console.log('Waiting for', key, 'at', length)
       while (core.length < length) {
         await new Promise(resolve => setTimeout(resolve, 20))
       }
@@ -52,11 +55,12 @@ module.exports = class CorestoreSnapshotter {
       await core.close()
     }
 
+
     await swarm.destroy()
     await store.close()
   }
 
-  async close() {
+  async close({ log = false } = {}) {
     const store = new Corestore(this.storage, { primaryKey: this.primaryKey, unsafe: true })
     const swarm = new Hyperswarm()
 
@@ -75,6 +79,7 @@ module.exports = class CorestoreSnapshotter {
       const core = store.get({ discoveryKey })
       await core.ready()
 
+      if (log) console.log('Waiting for', core.id, 'at', core.length)
       while (core.remoteContiguousLength < core.length) {
         await new Promise(resolve => setTimeout(resolve, 20))
       }
